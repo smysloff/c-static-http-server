@@ -35,9 +35,13 @@ main(void)
   /* read index.html to memory */
   const char header[] = "HTTP/1.1 200 OK\nContent-Type:text/html\r\n\n";
   char* body = readfile("views/index.html");
-  if (!body) die("body", "");
+  if (!body)
+  {
+    perror("Error <body>");
+    _exit(EXIT_FAILURE);
+  };
   size = sizeof(header) + strlen(body);
-  if (!(response = malloc(size))) die("response", body);
+  if (!(response = malloc(size))) die("Error <response>", body);
   strcpy(response, header);
   strcat(response, body);
   free(body);
@@ -45,7 +49,7 @@ main(void)
   /* create server and server socket */
   printf("INFO: socket creation and HTTP-server running\n");
   server_sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (server_sockfd < 0) die("socket", response);
+  if (server_sockfd < 0) die("Error <socket>", response);
 
   /* config socket */
   printf("INFO: socket configuration\n");
@@ -56,12 +60,12 @@ main(void)
   /* bind socket */
   printf("INFO: socket binding\n");
   if (bind(server_sockfd, (struct sockaddr*) &addr, sizeof(addr)) < 0)
-    die("bind", response);
+    die("Error <bind>", response);
 
   /* listen socket */
   printf("INFO: socket start listening\n");
   if (listen(server_sockfd, 1) < 0)
-    die("listen", response);
+    die("Error <listen>", response);
 
   while (1)
   {
@@ -70,7 +74,7 @@ main(void)
     /* accept socket */
     printf("INFO: socket ready to accept new connection\n");
     client_sockfd = accept(server_sockfd, NULL, NULL);
-    if (server_sockfd < 0) die("accept", response);
+    if (server_sockfd < 0) die("Error <accept>", response);
 
     /* send response */
     printf("INFO: socket get connection and send response\n");
