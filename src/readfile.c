@@ -1,5 +1,12 @@
 #include "readfile.h"
 
+static char* die(FILE* fd)
+{
+  fclose(fd);
+  return NULL;
+}
+
+
 char*
 readfile(const char* name)
 {
@@ -17,28 +24,15 @@ readfile(const char* name)
 
   /* get file size */
 
-  if (fseek(fd, 0L, SEEK_END))
-  {
-    fclose(fd);
-    return NULL;
-  }
-
-  if (!(size = ftell(fd)))
-  {
-    fclose(fd);
-    return NULL;
-  }
-  
+  if (fseek(fd, 0L, SEEK_END)) die(fd);
+  if (!(size = ftell(fd))) die(fd);
   rewind(fd);
 
 
   /* allocate memory */
 
   if(!(content = malloc(sizeof(char) * (size + 1))))
-  {
-    fclose(fd);
-    return NULL;
-  }
+    die(fd);
 
 
   /* read file */
