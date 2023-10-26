@@ -21,8 +21,9 @@ void
 die(const char* msg, char* data)
 {
   perror(msg);
+  if (server_sockfd > 0)
+    close(server_sockfd);
   free(data);
-  close(server_sockfd);
   _exit(EXIT_FAILURE);
 }
 
